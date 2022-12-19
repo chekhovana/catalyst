@@ -1,0 +1,1 @@
+from catalyst.custom.metrics.soft import SoftBinaryMetric

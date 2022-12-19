@@ -4,7 +4,6 @@ from typing import Iterable, Dict, Union, Optional
 import wandb
 import catalyst
 from catalyst import utils
-# from catalyst.loggers.wandb import WandbLogger
 from catalyst.settings import SETTINGS
 
 
