@@ -142,3 +142,4 @@ presets/
 _todo/
 tests/MNIST/
 codestyle.txt
+/examples/wandb/

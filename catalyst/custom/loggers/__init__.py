@@ -1,1 +1,1 @@
-from catalyst.custom.loggers.wandb import WandbLogger
+from catalyst.custom.loggers.wandb import CustomWandbLogger
