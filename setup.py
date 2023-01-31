@@ -51,7 +51,7 @@ extras = {
     "onnx": load_requirements("requirements/requirements-onnx.txt"),
     "optuna": load_requirements("requirements/requirements-optuna.txt"),
     "profiler": load_requirements("requirements/requirements-profiler.txt"),
-    # "wandb": load_requirements("requirements/requirements-wandb.txt"),
+    "wandb": load_requirements("requirements/requirements-wandb.txt"),
     # "xla": load_requirements("requirements/requirements-xla.txt"),
 }
 extras["all"] = extras["cv"] + extras["ml"] + extras["optuna"]
