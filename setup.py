@@ -60,7 +60,7 @@ extras["all"] = extras["cv"] + extras["ml"] + extras["optuna"]
 # for group_name in extras:
 #     all_deps += extras[group_name]
 # extras["all"] = all_deps
-
+print('=====', extras)
 setup(
     name=NAME,
     version=load_version(),
