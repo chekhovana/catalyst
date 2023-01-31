@@ -2,7 +2,6 @@ import os.path
 from typing import Iterable, Dict, Union, Optional
 
 import wandb
-import catalyst
 from catalyst import utils
 from catalyst.settings import SETTINGS
 from catalyst.loggers import WandbLogger

@@ -200,6 +200,7 @@ class CheckpointCallback(ICheckpointCallback):
         )
 
     def on_epoch_end_best(self, runner: "IRunner") -> None:
+        print('on epoch end best', runner)
         """Event handler."""
         if self.loader_key is not None:
             score = runner.epoch_metrics[self.loader_key][self.metric_key]
@@ -208,8 +209,10 @@ class CheckpointCallback(ICheckpointCallback):
         self._handle_epoch(runner=runner, score=score)
 
         if self.save_best:
-            best_logprefix = f"{self.logdir}/{self.mode}.best"
-            self._save(runner, self._storage[0].obj, best_logprefix)
+            last_best = score == self._storage[0].metric
+            if last_best:
+                best_logprefix = f"{self.logdir}/{self.mode}.best"
+                self._save(runner, self._storage[0].obj, best_logprefix)
 
     def on_epoch_end_last(self, runner: "IRunner") -> None:
         """Event handler."""

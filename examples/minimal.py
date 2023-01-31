@@ -9,7 +9,7 @@ y = (torch.rand(num_samples, ) * num_classes).to(torch.int64)
 
 # pytorch loaders
 dataset = TensorDataset(X, y)
-loader = DataLoader(dataset, batch_size=32, num_workers=0)
+loader = DataLoader(dataset, batch_size=32)  # , num_workers=0)
 loaders = {"train": loader, "valid": loader}
 
 # model, criterion, optimizer, scheduler
@@ -29,8 +29,9 @@ from catalyst.custom.loggers import CustomWandbLogger
 logdir = './logs'
 files = [os.path.join(logdir, f'checkpoints/model.{cp}.pth') for cp in
          ('last', 'best')]
-loggers = dict(wandb=CustomWandbLogger(project='test_catalyst',
-                                       files=files))
+# loggers = dict(wandb=CustomWandbLogger(project='test_catalyst',
+#                                        files=files))
+loggers = dict()
 
 runner.train(
     model=model,
@@ -39,11 +40,11 @@ runner.train(
     scheduler=scheduler,
     loaders=loaders,
     logdir="./logs",
-    num_epochs=3,
+    num_epochs=10,
     valid_loader="valid",
-    valid_metric="accuracy03",
+    valid_metric="accuracy01",
     minimize_valid_metric=False,
-    verbose=True,
+    verbose=False,
     callbacks=[
         dl.AccuracyCallback(input_key="logits", target_key="targets",
                             num_classes=num_classes),
@@ -56,6 +57,14 @@ runner.train(
         # dl.ConfusionMatrixCallback(
         #     input_key="logits", target_key="targets", num_classes=num_classes
         # ),
+        # dl.CheckpointCallback(logdir='logs')
     ],
     loggers=loggers
 )
+
+print('evaluate')
+model.load_state_dict(torch.load('logs/checkpoints/model.best.pth'))
+runner.evaluate_loader(loaders['valid'], callbacks=[
+    dl.AccuracyCallback(input_key="logits", target_key="targets",
+                        num_classes=num_classes), ]
+                       )
