@@ -1,8 +1,14 @@
 import torch
 from torch.utils.data import DataLoader, TensorDataset
+import os
+import numpy as np
+# import catalyst.loggers
 from catalyst import dl
+from catalyst.custom.loggers import CometLogger
 
-# sample data
+np.random.seed(42)
+torch.manual_seed(42)
+
 num_samples, num_features, num_classes = int(1e4), int(1e1), 4
 X = torch.rand(num_samples, num_features)
 y = (torch.rand(num_samples, ) * num_classes).to(torch.int64)
@@ -18,52 +24,44 @@ criterion = torch.nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters())
 scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
 
-# model training
-runner = dl.SupervisedRunner(
-    input_key="features", output_key="logits", target_key="targets",
-    loss_key="loss"
-)
-import os
-from catalyst.custom.loggers import CustomWandbLogger
+runner = dl.SupervisedRunner(model=model)
 
-logdir = './logs'
-files = [os.path.join(logdir, f'checkpoints/model.{cp}.pth') for cp in
-         ('last', 'best')]
-# loggers = dict(wandb=CustomWandbLogger(project='test_catalyst',
-#                                        files=files))
-loggers = dict()
+logdir = 'logs'
+checkpoint_dir = 'logs/checkpoints'
+loggers = dict(
+    comet=CometLogger(project_name='minimal_example',
+                      checkpoint_dir=checkpoint_dir))
+# loggers = dict()
+callbacks = [
+    dl.AccuracyCallback(input_key="logits", target_key="targets",
+                        num_classes=num_classes),
+    # dl.PrecisionRecallF1SupportCallback(
+    #     input_key="logits", target_key="targets", num_classes=num_classes
+    # ),
+    # dl.AUCCallback(input_key="logits", target_key="targets"),
+    # catalyst[ml] required ``pip install catalyst[ml]``
+    # dl.ConfusionMatrixCallback(
+    #     input_key="logits", target_key="targets", num_classes=num_classes
+    # ),
+    dl.CheckpointCallback(logdir=checkpoint_dir, loader_key='valid',
+                          metric_key='accuracy01', minimize=False)
+]
 
-runner.train(
-    model=model,
-    criterion=criterion,
-    optimizer=optimizer,
-    scheduler=scheduler,
-    loaders=loaders,
-    logdir="./logs",
-    num_epochs=10,
-    valid_loader="valid",
-    valid_metric="accuracy01",
-    minimize_valid_metric=False,
-    verbose=False,
-    callbacks=[
-        dl.AccuracyCallback(input_key="logits", target_key="targets",
-                            num_classes=num_classes),
-        # uncomment for extra metrics:
-        # dl.PrecisionRecallF1SupportCallback(
-        #     input_key="logits", target_key="targets", num_classes=num_classes
-        # ),
-        # dl.AUCCallback(input_key="logits", target_key="targets"),
-        # catalyst[ml] required ``pip install catalyst[ml]``
-        # dl.ConfusionMatrixCallback(
-        #     input_key="logits", target_key="targets", num_classes=num_classes
-        # ),
-        # dl.CheckpointCallback(logdir='logs')
-    ],
-    loggers=loggers
-)
+# runner.train(
+#     criterion=criterion,
+#     optimizer=optimizer,
+#     scheduler=scheduler,
+#     loaders=loaders,
+#     callbacks=callbacks,
+#     logdir=logdir,
+#     num_epochs=20,
+#     verbose=False,
+#     loggers=loggers
+# )
 
 print('evaluate')
-model.load_state_dict(torch.load('logs/checkpoints/model.best.pth'))
+model.load_state_dict(torch.load('logs/checkpoints/comet.pth'))
+# model.load_state_dict(torch.load('/Users/chekhovana/Yandex.Disk.localized/downloads/model.best.pth'))
 runner.evaluate_loader(loaders['valid'], callbacks=[
     dl.AccuracyCallback(input_key="logits", target_key="targets",
                         num_classes=num_classes), ]

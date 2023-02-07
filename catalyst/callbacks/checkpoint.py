@@ -200,7 +200,6 @@ class CheckpointCallback(ICheckpointCallback):
         )
 
     def on_epoch_end_best(self, runner: "IRunner") -> None:
-        print('on epoch end best', runner)
         """Event handler."""
         if self.loader_key is not None:
             score = runner.epoch_metrics[self.loader_key][self.metric_key]

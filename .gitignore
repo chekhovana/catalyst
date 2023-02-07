@@ -143,3 +143,4 @@ _todo/
 tests/MNIST/
 codestyle.txt
 /examples/wandb/
+/.comet.config
