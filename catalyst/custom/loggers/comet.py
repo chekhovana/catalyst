@@ -14,12 +14,13 @@ class CometLogger(catalyst.loggers.CometLogger):
                  logging_frequency: int = 1,
                  log_batch_metrics: bool = SETTINGS.log_batch_metrics,
                  log_epoch_metrics: bool = SETTINGS.log_epoch_metrics,
-                 checkpoint_dir: str = None,
+                 checkpoint_dir: str = None, config_file: str = None,
                  **experiment_kwargs: Dict) -> None:
         super().__init__(workspace, project_name, experiment_id, comet_mode,
                          tags, logging_frequency, log_batch_metrics,
                          log_epoch_metrics, **experiment_kwargs)
         self.checkpoint_dir = checkpoint_dir
+        self.experiment.log_asset(config_file)
 
     def log_metrics(self, metrics: Dict[str, float], scope: str,
                     runner: "IRunner") -> None:

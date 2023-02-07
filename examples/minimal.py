@@ -30,7 +30,7 @@ logdir = 'logs'
 checkpoint_dir = 'logs/checkpoints'
 loggers = dict(
     comet=CometLogger(project_name='minimal_example',
-                      checkpoint_dir=checkpoint_dir))
+                      checkpoint_dir=checkpoint_dir, config_file='setup.py'))
 # loggers = dict()
 callbacks = [
     dl.AccuracyCallback(input_key="logits", target_key="targets",
