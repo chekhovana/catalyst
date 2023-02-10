@@ -24,11 +24,7 @@ class CometLogger(catalyst.loggers.CometLogger):
 
     def log_metrics(self, metrics: Dict[str, float], scope: str,
                     runner: "IRunner") -> None:
-        # if scope == 'loader':
-        #     super().log_metrics(metrics, scope, runner)
         if scope == 'epoch':
-            import time
-            time.sleep(1)
             for key, value in metrics.items():
                 if key.startswith('_'):
                     continue

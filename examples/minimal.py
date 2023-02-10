@@ -47,22 +47,22 @@ callbacks = [
                           metric_key='accuracy01', minimize=False)
 ]
 
-# runner.train(
-#     criterion=criterion,
-#     optimizer=optimizer,
-#     scheduler=scheduler,
-#     loaders=loaders,
-#     callbacks=callbacks,
-#     logdir=logdir,
-#     num_epochs=20,
-#     verbose=False,
-#     loggers=loggers
-# )
+runner.train(
+    criterion=criterion,
+    optimizer=optimizer,
+    scheduler=scheduler,
+    loaders=loaders,
+    callbacks=callbacks,
+    logdir=logdir,
+    num_epochs=5,
+    verbose=False,
+    loggers=loggers
+)
 
-print('evaluate')
-model.load_state_dict(torch.load('logs/checkpoints/comet.pth'))
-# model.load_state_dict(torch.load('/Users/chekhovana/Yandex.Disk.localized/downloads/model.best.pth'))
-runner.evaluate_loader(loaders['valid'], callbacks=[
-    dl.AccuracyCallback(input_key="logits", target_key="targets",
-                        num_classes=num_classes), ]
-                       )
+# print('evaluate')
+# model.load_state_dict(torch.load('logs/checkpoints/comet.pth'))
+# # model.load_state_dict(torch.load('/Users/chekhovana/Yandex.Disk.localized/downloads/model.best.pth'))
+# runner.evaluate_loader(loaders['valid'], callbacks=[
+#     dl.AccuracyCallback(input_key="logits", target_key="targets",
+#                         num_classes=num_classes), ]
+#                        )
