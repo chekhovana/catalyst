@@ -4,7 +4,7 @@ import os
 import numpy as np
 # import catalyst.loggers
 from catalyst import dl
-from catalyst.custom.loggers import CometLogger
+from catalyst.custom.loggers.comet import CometLogger
 
 np.random.seed(42)
 torch.manual_seed(42)
@@ -30,7 +30,7 @@ logdir = 'logs'
 checkpoint_dir = 'logs/checkpoints'
 loggers = dict(
     comet=CometLogger(project_name='minimal_example',
-                      checkpoint_dir=checkpoint_dir, config_file='setup.py'))
+                      checkpoint_dir=checkpoint_dir, config_file='train.yml'))
 # loggers = dict()
 callbacks = [
     dl.AccuracyCallback(input_key="logits", target_key="targets",

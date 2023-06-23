@@ -3,7 +3,20 @@ from typing import Dict, Optional, List
 
 import catalyst.loggers
 from catalyst.settings import SETTINGS
+import yaml
 
+from collections.abc import MutableMapping
+
+
+def flatten_dict(d: MutableMapping, parent_key: str = '', sep: str ='.') -> MutableMapping:
+    items = []
+    for k, v in d.items():
+        new_key = parent_key + sep + k if parent_key else k
+        if isinstance(v, MutableMapping):
+            items.extend(flatten_dict(v, new_key, sep=sep).items())
+        else:
+            items.append((new_key, v))
+    return dict(items)
 
 class CometLogger(catalyst.loggers.CometLogger):
 
@@ -21,6 +34,10 @@ class CometLogger(catalyst.loggers.CometLogger):
                          log_epoch_metrics, **experiment_kwargs)
         self.checkpoint_dir = checkpoint_dir
         self.experiment.log_asset(config_file)
+        with open(config_file) as f:
+            config = yaml.load(f, Loader=yaml.Loader)
+            config = flatten_dict(config)
+            self.experiment.log_parameters(config)
 
     def log_metrics(self, metrics: Dict[str, float], scope: str,
                     runner: "IRunner") -> None:
