@@ -4,10 +4,9 @@ from typing import Iterable, Dict, Union, Optional
 import wandb
 from catalyst import utils
 from catalyst.settings import SETTINGS
-from catalyst.loggers import WandbLogger
+import catalyst
 
-
-class CustomWandbLogger(WandbLogger):
+class WandbLogger(catalyst.loggers.WandbLogger):
     def __init__(self, project: str, name: Optional[str] = None,
                  entity: Optional[str] = None,
                  log_batch_metrics: bool = SETTINGS.log_batch_metrics,

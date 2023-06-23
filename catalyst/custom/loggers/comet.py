@@ -34,7 +34,7 @@ class CometLogger(catalyst.loggers.CometLogger):
                     epoch=runner.epoch_step,
                     prefix=f"{key}"
                 )
-            self.log_model()
+            # self.log_model()
 
     def log_model(self):
         if self.checkpoint_dir is None:
@@ -43,3 +43,9 @@ class CometLogger(catalyst.loggers.CometLogger):
             model_path = os.path.join(self.checkpoint_dir, f'model.{name}.pth')
             self.experiment.log_model(name, file_or_folder=model_path,
                                       overwrite=True)
+
+    def close_log(self) -> None:
+        self.log_model()
+        super().close_log()
+
+
