@@ -18,6 +18,7 @@ def flatten_dict(d: MutableMapping, parent_key: str = '', sep: str ='.') -> Muta
             items.append((new_key, v))
     return dict(items)
 
+
 class CometLogger(catalyst.loggers.CometLogger):
 
     def __init__(self, workspace: Optional[str] = None,
@@ -33,11 +34,12 @@ class CometLogger(catalyst.loggers.CometLogger):
                          tags, logging_frequency, log_batch_metrics,
                          log_epoch_metrics, **experiment_kwargs)
         self.checkpoint_dir = checkpoint_dir
-        self.experiment.log_asset(config_file)
-        with open(config_file) as f:
-            config = yaml.load(f, Loader=yaml.Loader)
-            config = flatten_dict(config)
-            self.experiment.log_parameters(config)
+        if config_file:
+            self.experiment.log_asset(config_file)
+            with open(config_file) as f:
+                config = yaml.load(f, Loader=yaml.Loader)
+                config = flatten_dict(config)
+                self.experiment.log_parameters(config)
 
     def log_metrics(self, metrics: Dict[str, float], scope: str,
                     runner: "IRunner") -> None:
@@ -60,6 +62,10 @@ class CometLogger(catalyst.loggers.CometLogger):
             model_path = os.path.join(self.checkpoint_dir, f'model.{name}.pth')
             self.experiment.log_model(name, file_or_folder=model_path,
                                       overwrite=True)
+
+    def log_hparams(self, hparams: Dict, runner: "IRunner" = None) -> None:
+        if len(hparams) > 0:
+            super().log_hparams(hparams, runner)
 
     def close_log(self) -> None:
         self.log_model()
